@@ -17,7 +17,7 @@ def download_latest_location_database(target_file: str | os.PathLike) -> bool:
         return datetime.strptime(resp.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z").timestamp()
 
     target_file = Path(target_file)
-    if target_file.exists() and target_file.stat().st_mtime > datetime.now().timestamp() - 24*60*60:
+    if target_file.exists() and target_file.stat().st_mtime > datetime.now().timestamp() - 24 * 60 * 60:
         return False  # Don't re-download it so often! Just once a day should be fine.
 
     target_url = "https://location.ipfire.org/databases/1/location.db.xz"
