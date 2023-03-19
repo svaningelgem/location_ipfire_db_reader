@@ -4,8 +4,6 @@ from pathlib import Path
 
 from requests import Response, Session
 
-session = Session()
-
 
 def download_latest_location_database(target_file: str | os.PathLike) -> bool:
     """
@@ -19,8 +17,12 @@ def download_latest_location_database(target_file: str | os.PathLike) -> bool:
         return datetime.strptime(resp.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z").timestamp()
 
     target_file = Path(target_file)
+    if target_file.exists() and target_file.stat().st_mtime > datetime.now().timestamp() - 24*60*60:
+        return False  # Don't re-download it so often! Just once a day should be fine.
+
     target_url = "https://location.ipfire.org/databases/1/location.db.xz"
 
+    session = Session()
     response = session.head(target_url)
     try:
         server_last_modified_time = _get_last_modified(response)

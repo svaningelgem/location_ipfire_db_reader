@@ -3,9 +3,9 @@ import socket
 from dataclasses import dataclass
 from typing import ClassVar, TypeVar
 
-from decompress_db import decompress_xz_file
-from download_db import download_latest_location_database
-from interpret_location_db import (
+from .decompress_db import decompress_xz_file
+from .download_db import download_latest_location_database
+from .interpret_location_db import (
     Block,
     as_int,
     loc_database_country_v1,

@@ -1,11 +1,10 @@
 [tool.poetry]
 name = "location_ipfire_db_reader"
-version = "1.0.1"
+version = "1.0.3"
 description = "Easily get the country code from an ip address."
 authors = ["Steven Van Ingelgem <steven@vaningelgem.be>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "src"}]
 
 
 [tool.poetry.dependencies]
