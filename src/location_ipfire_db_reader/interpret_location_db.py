@@ -6,9 +6,6 @@ from io import BufferedReader
 from typing import Callable, IO, TypeVar
 
 
-__all__ = ["LocationDatabase"]
-
-
 T = TypeVar("T", bound="Block")
 
 # https://docs.python.org/3/library/struct.html#format-characters
