@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import os
 import struct
 from dataclasses import dataclass, fields
 from functools import lru_cache
 from io import BufferedReader
-from typing import Callable, IO, TypeVar
-
+from pathlib import Path
+from typing import IO, Callable, TypeVar
 
 T = TypeVar("T", bound="Block")
 
@@ -135,6 +137,11 @@ class loc_database_network_node_v1(Block):
     one: int = "I"  # uint32_t
 
     network: int = "I"  # uint32_t
+
+    @property
+    def is_leaf(self) -> bool:
+        # https://github.com/ipfire/libloc/blob/master/src/database.c#L844
+        return self.network != 0xFFFFFFFF
 
 
 # https:# github.com/ipfire/libloc/blob/master/src/libloc/format.h#L96
@@ -287,7 +294,7 @@ if __name__ == "__main__":
     def _assign_name(obj: loc_database_country_v1 | loc_database_as_v1) -> None:
         obj.name = strings[obj.name].decode("utf8")
 
-    location_db = r"location.db"
+    location_db = Path(__file__).parent.parent / "tests/resources/location.db"
     with open(location_db, "rb") as fp:
         fp = BufferedReader(fp)
 
@@ -327,5 +334,5 @@ if __name__ == "__main__":
             post_processing=_assign_name,
         )
 
-        # dump_network(b'BE', 9031)
+        dump_network(b"BE", 9031)
         a = 1
