@@ -14,8 +14,7 @@ requests = ">=2"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "*"
-pytest = "*"
-
+pytest-cov = "*"
 
 [build-system]
 requires = ["poetry-core"]

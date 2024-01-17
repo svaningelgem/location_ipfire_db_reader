@@ -1,24 +1,26 @@
+from __future__ import annotations
+
+import contextlib
 import os
 from datetime import datetime
 from pathlib import Path
 
 from requests import Response, Session
 
+from .decompress_db import decompress_xz_file
 
-def download_latest_location_database(target_file: str | os.PathLike) -> bool:
+
+def _get_last_modified(resp: Response) -> float:
     """
-    :return: True when the file is downloaded, False when the current one is still OK.
+    :raise: KeyError when the header isn't found
     """
 
-    def _get_last_modified(resp: Response) -> float:
-        """
-        :raise: KeyError when the header isn't found
-        """
-        return datetime.strptime(resp.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z").timestamp()
+    return datetime.strptime(resp.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z").timestamp()
 
-    target_file = Path(target_file)
+
+def download_or_update_location_database(target_file: Path) -> None:
     if target_file.exists() and target_file.stat().st_mtime > datetime.now().timestamp() - 24 * 60 * 60:
-        return False  # Don't re-download it so often! Just once a day should be fine.
+        return  # Don't re-_download it so often! Just once a day should be fine.
 
     target_url = "https://location.ipfire.org/databases/1/location.db.xz"
 
@@ -34,14 +36,14 @@ def download_latest_location_database(target_file: str | os.PathLike) -> bool:
         except KeyError:
             need_re_download = True
 
-    if need_re_download:
-        response = session.get(target_url)
+    if not need_re_download:
+        return
 
-        target_file.write_bytes(response.content)
-        try:
-            atime = target_file.stat().st_atime
-            os.utime(target_file, (atime, _get_last_modified(response)))
-        except KeyError:
-            pass
+    response = session.get(target_url)
 
-    return need_re_download
+    target_file.write_bytes(response.content)
+    with contextlib.suppress(KeyError):
+        atime = target_file.stat().st_atime
+        os.utime(target_file, (atime, _get_last_modified(response)))
+
+    decompress_xz_file(target_file)

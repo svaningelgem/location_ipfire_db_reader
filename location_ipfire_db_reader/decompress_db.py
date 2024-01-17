@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import lzma
-import os
 from pathlib import Path
 
 
-def decompress_xz_file(file_path: str | os.PathLike):
+def decompress_xz_file(file_path: str | Path):
     file_path = Path(file_path)
     target = file_path.with_suffix(".tmp")
 
