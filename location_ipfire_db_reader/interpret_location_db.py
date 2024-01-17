@@ -5,7 +5,6 @@ from functools import lru_cache
 from io import BufferedReader
 from typing import Callable, IO, TypeVar
 
-
 T = TypeVar("T", bound="Block")
 
 # https://docs.python.org/3/library/struct.html#format-characters

@@ -8,14 +8,12 @@ readme = "README.md"
 
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = ">=3.9"
 requests = ">=2"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "*"
-flake8 = "*"
-flake8-pyproject = "*"
+ruff = "*"
 
 
 [build-system]
@@ -23,14 +21,23 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.black]
-line_length = 120
-
-
-[tool.flake8]
-max_line_length = 120
-extend_ignore = 'E203'
-
-
 [tool.poetry.urls]
 "Source Code" = "https://github.com/svaningelgem/location_ipfire_db_reader"
+
+
+[tool.ruff]
+select = ["E", "F", "C", "W", "I"]
+ignore = []
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = ["F401"]
+fix = true
+
+# Same as Black.
+line-length = 120
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+target-version = "py39"
