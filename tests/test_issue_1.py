@@ -26,11 +26,14 @@ def test_basic_retrieval(locdb: LocationDatabase, ip: str, expected_country: str
 
 def test_getitem(locdb: LocationDatabase) -> None:
     sut = locdb["5.39.209.157"]
+
     assert sut.asn == 198871
     assert sut.asn_name == "Diputacion Provincial de Castellon"
     assert sut.country_code == "ES"
     assert sut.country_name == "Spain"
     assert sut.country_continent == "EU"
+
+    assert sut.ip == "5.39.209.157"
     assert sut.subnet_mask == 24
     assert sut.network_address == "5.39.209.0"
     assert sut.ip_with_cidr == "5.39.209.0/24"
