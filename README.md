@@ -75,7 +75,9 @@ is_drop: False
 ## Developers information
 (or more accurately named: _information for myself at a future point in time_ 😎)
 
+* `database.py`: The wrapper, ie: consumer-facing code.
+* `database_reader.py`: The wrapper around the filehandling and reading and stuff.
 * `decompress_db.py` contains just the code to facilitate extraction of the database
 * `download_db.py`: download (or update) once a day the newest ipfire location database.
-* `database.py`: The wrapper (consumer-facing code) around the filehandling and reading and stuff.
 * `interpret_location_db.py`: contains the low-level interpretation of the database file.
+* `ip_information.py`: contains the class where all information can be retrieved from ipfires database.
