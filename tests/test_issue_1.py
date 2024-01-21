@@ -52,7 +52,7 @@ def test_getitem_failure(locdb: LocationDatabase) -> None:
 def test_ip_information_failure(locdb: LocationDatabase) -> None:
     sut = locdb["5.39.209.157"]
     # Ok, we've got to fake it...
-    fake_asn = 0xffffff
+    fake_asn = 0xFFFFFF
     sut._network_info.asn = fake_asn
     with pytest.raises(ValueError, match=f"Can't find asn object with id {fake_asn}!"):
         sut.asn_name
