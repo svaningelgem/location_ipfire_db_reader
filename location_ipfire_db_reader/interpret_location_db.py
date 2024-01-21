@@ -61,14 +61,20 @@ class Block:
     @classmethod
     def read(cls, fp: IO):
         n_bytes = fp.read(size(cls))
-        data = struct.unpack(fmt(cls), n_bytes)
+        data = list(struct.unpack(fmt(cls), n_bytes))
+
+        # Convert bytes into string
+        for idx, (field, value) in enumerate(zip(cls.__dataclass_fields__.values(), data)):  # type: tuple[int, tuple["Field", object]]
+            if field.type == "str":
+                data[idx] = value.decode("utf8")
+
         return cls(*data)
 
 
 # https:#github.com/ipfire/libloc/blob/master/src/libloc/format.h#L39
 @dataclass
 class loc_database_magic(Block):
-    magic: str = "7s"
+    magic: bytes = "7s"
     version: int = "B"
 
 
@@ -110,11 +116,11 @@ class loc_database_header_v1(Block):
     # Signatures
     signature1_length: int = "H"  # uint16_t
     signature2_length: int = "H"  # uint16_t
-    signature1: str = f"{LOC_SIGNATURE_MAX_LENGTH}s"
-    signature2: str = f"{LOC_SIGNATURE_MAX_LENGTH}s"
+    signature1: bytes = f"{LOC_SIGNATURE_MAX_LENGTH}s"
+    signature2: bytes = f"{LOC_SIGNATURE_MAX_LENGTH}s"
 
     # Add some padding for future extensions
-    padding: str = "32s"
+    padding: bytes = "32s"
 
     @classmethod
     def read(cls, fp: IO):
@@ -152,7 +158,7 @@ class loc_database_network_v1(Block):
     #  The country this network is located in
     country_code: str = "2s"
 
-    _reserve: str = "2s"
+    _reserve: bytes = "2s"
 
     #  ASN
     asn: int = "I"  # uint32_t
@@ -161,7 +167,7 @@ class loc_database_network_v1(Block):
     flags: int = "H"  # uint16_t
 
     #  Reserved
-    padding: str = "2s"
+    padding: bytes = "2s"
 
     @property
     def is_anonymous_proxy(self) -> bool:
@@ -227,11 +233,6 @@ def read_stringpool(fp: IO, offset: int, length: int) -> dict[int, bytes]:
         output[position] = string
         position += 1 + len(string)
     return output
-
-
-def build_network_tree():
-    def __loc_database_node_is_leaf(node: loc_database_network_node_v1) -> bool:
-        return node.network != 0xFFFFFFFF
 
 
 def bit2ip(bitstring):
