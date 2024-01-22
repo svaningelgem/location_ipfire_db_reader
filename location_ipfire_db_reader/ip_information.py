@@ -7,6 +7,7 @@ from functools import cached_property
 from typing import BinaryIO, Callable, TypeVar
 
 from .database_reader import DatabaseReader, is_ipv4
+from .exceptions import UnknownASNName
 from .interpret_location_db import (
     Block,
     as_int,
@@ -17,6 +18,13 @@ from .interpret_location_db import (
 )
 
 T = TypeVar("T", bound=Block)
+
+
+__all__ = ["IpInformation"]
+
+
+class _CannotFindObject(Exception):
+    ...
 
 
 @dataclass
@@ -81,7 +89,7 @@ class IpInformation:
             else:
                 hi = mid - 1
 
-        raise ValueError(f"Can't find asn object with id {self.asn}!")
+        raise _CannotFindObject
 
     @cached_property
     def asn_name(self) -> str:
@@ -92,12 +100,15 @@ class IpInformation:
                 return -1
             return 1
 
-        obj = self._find_object(
-            start_offset=self._db.header.as_offset,
-            max_size=self._db.header.as_length,
-            obj_to_read=loc_database_as_v1,
-            predicate=cmp,
-        )
+        try:
+            obj = self._find_object(
+                start_offset=self._db.header.as_offset,
+                max_size=self._db.header.as_length,
+                obj_to_read=loc_database_as_v1,
+                predicate=cmp,
+            )
+        except _CannotFindObject:
+            raise UnknownASNName(self.asn)
 
         return self._read_string(self._db.header.pool_offset + obj.name)
 

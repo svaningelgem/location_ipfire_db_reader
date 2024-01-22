@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import BinaryIO, TypeVar
 
 from .download_db import download_or_update_location_database
+from .exceptions import IPAddressError
 from .interpret_location_db import (
     Block,
     as_int,
@@ -129,4 +130,4 @@ class DatabaseReader:
                 self.fp.seek(network_offset, os.SEEK_SET)
                 return loc_database_network_v1.read(self.fp), len(node_chain)
 
-            raise ValueError("Cannot find anything anymore!")
+            raise IPAddressError(ip)
