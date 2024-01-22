@@ -72,6 +72,14 @@ is_anycast: True
 is_drop: False
 ```
 
+## Exceptions
+All exceptions within this package will inherit from `LocationIPFireDBReaderException`. So if you want a blanket-capture-all. That's what you'll need.
+
+However, these are more fine-tuned versions:
+- `UnknownASNName`: will be raised when an ASN is found, but there is no known name for it.
+- `IPAddressError`: will be raised when an IP lookup fails. This happens with reserved IPs so far.
+
+
 ## Developers information
 (or more accurately named: _information for myself at a future point in time_ 😎)
 
