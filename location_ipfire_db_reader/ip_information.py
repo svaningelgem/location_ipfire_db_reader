@@ -29,13 +29,13 @@ class _CannotFindObject(Exception):
 
 
 def return_empty_str_on_exception(func):
-    """Decorator to easily switch between raising an exception and returning an empty string."""
+    """Switch easily between raising an exception and returning an empty string."""
 
     @functools.wraps(func)
     def inner(self, *args: object, **kwargs: object) -> object:
         try:
             return func(self, *args, **kwargs)
-        except:
+        except:  # noqa: E722
             if self._db.raise_exceptions:
                 raise
             return ""
@@ -92,8 +92,8 @@ class IpInformation:
                 obj_to_read=loc_database_as_v1,
                 predicate=cmp,
             )
-        except _CannotFindObject:
-            raise UnknownASNName(self.asn)
+        except _CannotFindObject as ex:
+            raise UnknownASNName(self.asn) from ex
 
         return self._read_string(self._db.header.pool_offset + obj.name)
 

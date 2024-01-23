@@ -27,12 +27,36 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.ruff]
-select = ["E", "F", "C", "W", "I"]
-ignore = []
+select = [
+    "B", # flake8-bugbear
+    "C",
+    "C4", # flake8-comprehensions
+    # "D", # flake8-docstrings
+    "D213", # Augment NumPy docstring convention: Multi-line docstring summary should start at the second line
+    "D417", # Augment NumPy docstring convention: Missing argument descriptions
+    "E", # pycodestyle
+    "EM", # flake8-errmsg
+    "F", # Pyflakes
+    "FA", # flake8-future-annotations
+    "FBT001", # flake8-boolean-trap
+    "I", # isort
+    "PIE", # flake8-pie
+    "PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "RUF", # Ruff-specific rules
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TD", # flake8-todos
+    "TID", # flake8-tidy-imports
+    "TRY", # tryceratops
+    "UP", # pyupgrade
+    "W", # pycodestyle
+]
+ignore = ["D211", "D213"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
-unfixable = ["F401"]
+unfixable = []
 fix = true
 
 # Same as Black.

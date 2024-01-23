@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import os
 import time
+import typing
 from datetime import datetime
-from pathlib import Path
 
 from requests import Session
 
 from .decompress_db import decompress_xz_file
+
+if typing.TYPE_CHECKING:
+    from pathlib import Path
 
 
 def download_or_update_location_database(target_file: Path) -> None:

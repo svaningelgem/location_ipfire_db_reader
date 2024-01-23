@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from .database_reader import DatabaseReader
 from .exceptions import IPAddressError
-from .database_reader import DatabaseReader, is_ipv4
 from .interpret_location_db import loc_database_network_v1
 from .ip_information import IpInformation
 

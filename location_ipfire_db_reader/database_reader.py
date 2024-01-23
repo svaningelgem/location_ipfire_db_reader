@@ -2,22 +2,29 @@ from __future__ import annotations
 
 import os
 import socket
+import typing
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from pathlib import Path
-from typing import BinaryIO, Iterable, TypeVar
+from typing import BinaryIO, TypeVar
 
 from .download_db import download_or_update_location_database
 from .exceptions import IPAddressError
 from .interpret_location_db import (
     Block,
     as_int,
-    loc_database_as_v1, loc_database_country_v1, loc_database_header_v1,
+    loc_database_as_v1,
+    loc_database_country_v1,
+    loc_database_header_v1,
     loc_database_magic,
     loc_database_network_node_v1,
     loc_database_network_v1,
     size,
 )
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Iterable
+
 
 __all__ = ["DatabaseReader", "is_ipv4"]
 
@@ -31,8 +38,6 @@ def is_ipv4(ip: str) -> bool:
 
 
 def _convert_ip_to_bitstring(ip: str | int) -> str:
-    # TODO: maybe better to change this into an integer & do integer comparisons?
-    #  --> going to keep it as is now as it's easier to debug.
     if isinstance(ip, int):
         return bin(ip)[2:]  # strip 0b
 
@@ -43,10 +48,7 @@ def _convert_ip_to_bitstring(ip: str | int) -> str:
     ip = ip.split("/")[0]  # Remove CIDR
     is_ipv6 = ":" in ip
 
-    if is_ipv6:  # ipv6?
-        binary_address = socket.inet_pton(socket.AF_INET6, ip)
-    else:  # ipv4
-        binary_address = socket.inet_pton(socket.AF_INET, ip)
+    binary_address = socket.inet_pton(socket.AF_INET6 if is_ipv6 else socket.AF_INET, ip)
 
     final = "".join(f"{byte:08b}" for byte in binary_address)
     if not is_ipv6:
@@ -77,7 +79,7 @@ class DatabaseReader:
     @cached_property
     def fp(self) -> BinaryIO:
         download_or_update_location_database(self.filename)
-        return open(self.filename, "rb")
+        return self.filename.open("rb")
 
     @cached_property
     def header(self) -> loc_database_header_v1:
@@ -131,9 +133,8 @@ class DatabaseReader:
         # Implementation from https://github.com/ipfire/libloc/blob/master/src/database.c#L848
         node_index = 0
 
-        bitstring = _convert_ip_to_bitstring(ip)
         node_chain = []
-        for idx, bit in enumerate(bitstring):
+        for bit in _convert_ip_to_bitstring(ip):
             offset = self.header.network_tree_offset + size(loc_database_network_node_v1) * node_index
             node = _read_network_from_file(self.fp, offset)
             node_chain.append(node)
@@ -141,8 +142,6 @@ class DatabaseReader:
             node_index = node.zero if bit == "0" else node.one
 
             if node_index > 0:
-                # if node_index < self._header.network_node_objects.count:  # TODO!!
-                #     raise IndexError
                 continue
 
             # Find the previous leaf here

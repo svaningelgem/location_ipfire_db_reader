@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import struct
 from dataclasses import dataclass, fields
-from functools import lru_cache
+from functools import cache
 from io import BufferedReader
 from pathlib import Path
 from typing import IO, Callable, TypeVar
@@ -27,8 +27,8 @@ LOC_NETWORK_FLAG_ANYCAST = 1 << 2  # A3
 LOC_NETWORK_FLAG_DROP = 1 << 3  # XD
 
 
-@lru_cache(maxsize=None)
-def size(block: type["Block"]) -> int:
+@cache
+def size(block: type[Block]) -> int:
     total = 0
 
     for fld in fields(block):
@@ -40,11 +40,9 @@ def size(block: type["Block"]) -> int:
     return total
 
 
-@lru_cache(maxsize=None)
-def fmt(block: type["Block"]) -> str:
-    """
-    > = Big Endian
-    """
+@cache
+def fmt(block: type[Block]) -> str:
+    """> = Big Endian"""
     return ">" + "".join(fld.default for fld in fields(block))
 
 
@@ -206,7 +204,7 @@ class loc_database_country_v1(Block):
     name: int = "I"  # uint32_t
 
 
-def read_objects(fp: IO, type_: type[T], offset: int, length: int, post_processing: Callable = None) -> list[T]:
+def read_objects(fp: IO, type_: type[T], offset: int, length: int, post_processing: Callable | None = None) -> list[T]:
     # Offset = from start of file (os.SEEK_SET)
     count = as_int(length / size(type_))
 
@@ -296,7 +294,7 @@ if __name__ == "__main__":
         obj.name = strings[obj.name].decode("utf8")
 
     location_db = Path(__file__).parent.parent / "tests/resources/location.db"
-    with open(location_db, "rb") as fp:
+    with location_db.open("rb") as fp:
         fp = BufferedReader(fp)
 
         magic_header = loc_database_magic.read(fp)

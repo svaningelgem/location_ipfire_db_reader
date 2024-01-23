@@ -1,8 +1,5 @@
-"""
-Issue #1 reported by MaurUppi:
+"""Issue #1 reported by MaurUppi.
 https://github.com/svaningelgem/location_ipfire_db_reader/issues/1
-
-> the lookup result is not good.
 """
 import pytest
 
