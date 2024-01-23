@@ -44,11 +44,9 @@ def fmt(block: type[Block]) -> str:
     return ">" + "".join(fld.default for fld in fields(block))
 
 
-def as_int(nr: int | float) -> int:
+def as_int(nr: int | float | str) -> int:
     if not isinstance(nr, int):
-        nr2 = int(nr)
-        assert nr2 == nr, f"{nr} is not an integer."
-        return nr2
+        return int(float(nr))
 
     return nr
 

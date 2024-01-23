@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import socket
 import typing
-from collections.abc import Iterator
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from pathlib import Path
