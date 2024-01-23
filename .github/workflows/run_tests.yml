@@ -80,6 +80,13 @@ jobs:
       - name: Install location_ipfire_db_reader
         run: poetry install --no-interaction
 
+      - name: Load cached resources from tests
+        id: cached-test-resources
+        uses: actions/cache@v3
+        with:
+          path: tests/resources
+          key: test_resources
+
       - name: Run tests
         run: |
           source .venv/bin/activate
