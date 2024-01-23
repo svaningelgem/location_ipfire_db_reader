@@ -3,10 +3,11 @@ from __future__ import annotations
 import os
 import socket
 import typing
+from collections.abc import Iterator
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from pathlib import Path
-from typing import BinaryIO, TypeVar, Iterator
+from typing import BinaryIO, TypeVar
 
 from .download_db import download_or_update_location_database
 from .exceptions import IPAddressError
@@ -23,7 +24,7 @@ from .interpret_location_db import (
 )
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterator
 
 
 __all__ = ["DatabaseReader", "is_ipv4"]
