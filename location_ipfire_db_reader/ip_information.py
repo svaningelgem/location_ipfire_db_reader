@@ -28,7 +28,7 @@ class _CannotFindObject(Exception):
     ...
 
 
-def return_empty_str_on_exception(func):
+def return_empty_str_on_exception(func: Callable) -> Callable:
     """Switch easily between raising an exception and returning an empty string."""
 
     @functools.wraps(func)

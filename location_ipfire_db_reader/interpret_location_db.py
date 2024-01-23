@@ -57,7 +57,7 @@ def as_int(nr: int | float) -> int:
 
 class Block:
     @classmethod
-    def read(cls, fp: IO):
+    def read(cls, fp: IO) -> Block:
         n_bytes = fp.read(size(cls))
         data = list(struct.unpack(fmt(cls), n_bytes))
 
@@ -121,7 +121,7 @@ class loc_database_header_v1(Block):
     padding: bytes = "32s"
 
     @classmethod
-    def read(cls, fp: IO):
+    def read(cls, fp: IO) -> loc_database_header_v1:
         # Go back
         obj: loc_database_header_v1 = super().read(fp)  # But here we went too far
         if obj.signature1_length != LOC_SIGNATURE_MAX_LENGTH or obj.signature2_length != LOC_SIGNATURE_MAX_LENGTH:
@@ -233,7 +233,7 @@ def read_stringpool(fp: IO, offset: int, length: int) -> dict[int, bytes]:
     return output
 
 
-def bit2ip(bitstring):
+def bit2ip(bitstring) -> str:
     if bitstring.startswith("0" * 80 + "1" * 16):  # ipv4
         bitstring = bitstring[96:]
 
@@ -262,7 +262,7 @@ def bit2ip(bitstring):
         return ipv6_address + cidr
 
 
-def dump_network(country, asn):
+def dump_network(country, asn) -> None:
     networks = [(idx, no) for idx, no in enumerate(network_objects) if no.asn == asn and no.country_code == country]
     network_numbers = [i for i, n in networks]
     # print('networks:', networks)

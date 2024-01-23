@@ -28,8 +28,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 select = [
+    "ANN", # flake8-annotations
     "B", # flake8-bugbear
-    "C",
+    "C90", # mccabe
     "C4", # flake8-comprehensions
     # "D", # flake8-docstrings
     "D213", # Augment NumPy docstring convention: Multi-line docstring summary should start at the second line
@@ -52,7 +53,13 @@ select = [
     "UP", # pyupgrade
     "W", # pycodestyle
 ]
-ignore = ["D211", "D213"]
+ignore = [
+    "D211",
+    "D213",
+    "ANN001",  # Missing type annotation for function argument `self`
+    "ANN101",  # Missing type annotation for `self` in method
+    "ANN102",  # Missing type annotation for `cls` in classmethod
+]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

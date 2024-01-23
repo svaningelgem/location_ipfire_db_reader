@@ -4,7 +4,7 @@ import lzma
 from pathlib import Path
 
 
-def decompress_xz_file(file_path: str | Path):
+def decompress_xz_file(file_path: str | Path) -> None:
     file_path = Path(file_path)
     target = file_path.with_suffix(".tmp")
 

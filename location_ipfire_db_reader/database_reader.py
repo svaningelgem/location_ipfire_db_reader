@@ -6,7 +6,7 @@ import typing
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from pathlib import Path
-from typing import BinaryIO, TypeVar
+from typing import BinaryIO, TypeVar, Iterator
 
 from .download_db import download_or_update_location_database
 from .exceptions import IPAddressError
@@ -39,7 +39,10 @@ def is_ipv4(ip: str) -> bool:
 
 def _convert_ip_to_bitstring(ip: str | int) -> str:
     if isinstance(ip, int):
-        return bin(ip)[2:]  # strip 0b
+        ip = bin(ip)[2:]  # strip 0b
+        if len(ip) <= 32:  # IPv4
+            ip = _ipv4_start + f"{ip:>032}"
+        return ip
 
     if all(c in ("0", "1") for c in ip):
         # Already a bitstring
@@ -68,13 +71,8 @@ class DatabaseReader:
     filename: str | Path
     raise_exceptions: bool = True
 
-    def __post_init__(self):
-        if isinstance(self.filename, str):
-            self.filename = Path(self.filename)
-
-        self.filename = self.filename.resolve().absolute()
-
-        # self._read_countries()
+    def __post_init__(self) -> None:
+        self.filename = Path(self.filename).resolve().absolute()
 
     @cached_property
     def fp(self) -> BinaryIO:
@@ -91,14 +89,14 @@ class DatabaseReader:
 
         return loc_database_header_v1.read(self.fp)
 
-    def all_countries(self) -> Iterable[loc_database_country_v1]:
+    def all_countries(self) -> Iterator[loc_database_country_v1]:
         yield from self._read_objects(
             loc_database_country_v1,
             self.header.countries_offset,
             self.header.countries_length,
         )
 
-    def all_autonomous_systems(self) -> Iterable[loc_database_as_v1]:
+    def all_autonomous_systems(self) -> Iterator[loc_database_as_v1]:
         yield from self._read_objects(
             loc_database_as_v1,
             self.header.as_offset,
@@ -107,21 +105,21 @@ class DatabaseReader:
 
     all_ass = all_autonomous_systems
 
-    def all_network_data(self) -> Iterable[loc_database_network_v1]:
+    def all_network_data(self) -> Iterator[loc_database_network_v1]:
         yield from self._read_objects(
             loc_database_network_v1,
             self.header.network_data_offset,
             self.header.network_data_length,
         )
 
-    def all_network_nodes(self) -> Iterable[loc_database_network_node_v1]:
+    def all_network_nodes(self) -> Iterator[loc_database_network_node_v1]:
         yield from self._read_objects(
             loc_database_network_node_v1,
             self.header.network_tree_offset,
             self.header.network_tree_length,
         )
 
-    def _read_objects(self, type_: type[T], offset: int, length: int) -> Iterable[T]:
+    def _read_objects(self, type_: type[T], offset: int, length: int) -> Iterator[T]:
         count = as_int(length / size(type_))
 
         self.fp.seek(offset, os.SEEK_SET)
