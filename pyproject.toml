@@ -26,6 +26,15 @@ build-backend = "poetry.core.masonry.api"
 "Source Code" = "https://github.com/svaningelgem/location_ipfire_db_reader"
 
 
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_also = [
+    "if typing.TYPE_CHECKING:"
+]
+
+
 [tool.ruff]
 select = [
     "ANN", # flake8-annotations
