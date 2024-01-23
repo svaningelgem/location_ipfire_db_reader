@@ -90,7 +90,7 @@ jobs:
       - name: Run tests
         run: |
           source .venv/bin/activate
-          pytest --cov=location_ipfire_db_reader --cov-append --cov-fail-under=70 --cov-branch --cov-report=json --cov-report=term
+          pytest --cov=location_ipfire_db_reader --cov-append --cov-fail-under=90 --cov-branch --cov-report=json --cov-report=term
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
