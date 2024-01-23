@@ -4,3 +4,5 @@ dist/
 /tests/resources/location.db
 .ruff_cache/
 .pytest_cache/
+
+scripts/

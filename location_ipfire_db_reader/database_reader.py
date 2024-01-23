@@ -5,14 +5,14 @@ import socket
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from pathlib import Path
-from typing import BinaryIO, TypeVar
+from typing import BinaryIO, Iterable, TypeVar
 
 from .download_db import download_or_update_location_database
 from .exceptions import IPAddressError
 from .interpret_location_db import (
     Block,
     as_int,
-    loc_database_header_v1,
+    loc_database_as_v1, loc_database_country_v1, loc_database_header_v1,
     loc_database_magic,
     loc_database_network_node_v1,
     loc_database_network_v1,
@@ -64,6 +64,7 @@ def _read_network_from_file(fp: BinaryIO, offset: int) -> loc_database_network_n
 @dataclass
 class DatabaseReader:
     filename: str | Path
+    raise_exceptions: bool = True
 
     def __post_init__(self):
         if isinstance(self.filename, str):
@@ -88,19 +89,43 @@ class DatabaseReader:
 
         return loc_database_header_v1.read(self.fp)
 
-    # def _read_countries(self):
-    #     self._countries = self._read_objects(
-    #         loc_database_country_v1,
-    #         self._header.countries_offset,
-    #         self._header.countries_length,
-    #     )
+    def all_countries(self) -> Iterable[loc_database_country_v1]:
+        yield from self._read_objects(
+            loc_database_country_v1,
+            self.header.countries_offset,
+            self.header.countries_length,
+        )
 
-    def _read_objects(self, type_: type[T], offset: int, length: int) -> list[T]:
+    def all_autonomous_systems(self) -> Iterable[loc_database_as_v1]:
+        yield from self._read_objects(
+            loc_database_as_v1,
+            self.header.as_offset,
+            self.header.as_length,
+        )
+
+    all_ass = all_autonomous_systems
+
+    def all_network_data(self) -> Iterable[loc_database_network_v1]:
+        yield from self._read_objects(
+            loc_database_network_v1,
+            self.header.network_data_offset,
+            self.header.network_data_length,
+        )
+
+    def all_network_nodes(self) -> Iterable[loc_database_network_node_v1]:
+        yield from self._read_objects(
+            loc_database_network_node_v1,
+            self.header.network_tree_offset,
+            self.header.network_tree_length,
+        )
+
+    def _read_objects(self, type_: type[T], offset: int, length: int) -> Iterable[T]:
         count = as_int(length / size(type_))
 
         self.fp.seek(offset, os.SEEK_SET)
 
-        return [type_.read(self.fp) for _ in range(count)]
+        for _ in range(count):
+            yield type_.read(self.fp)
 
     def _find_network_information(self, ip: str) -> tuple[loc_database_network_v1, subnet_mask]:
         # Implementation from https://github.com/ipfire/libloc/blob/master/src/database.c#L848

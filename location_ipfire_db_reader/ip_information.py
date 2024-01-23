@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import ipaddress
 import os
 from dataclasses import dataclass
@@ -27,6 +28,21 @@ class _CannotFindObject(Exception):
     ...
 
 
+def return_empty_str_on_exception(func):
+    """Decorator to easily switch between raising an exception and returning an empty string."""
+
+    @functools.wraps(func)
+    def inner(self, *args: object, **kwargs: object) -> object:
+        try:
+            return func(self, *args, **kwargs)
+        except:
+            if self._db.raise_exceptions:
+                raise
+            return ""
+
+    return inner
+
+
 @dataclass
 class IpInformation:
     _db: DatabaseReader
@@ -35,6 +51,7 @@ class IpInformation:
     _subnet_mask: int
 
     @cached_property
+    @return_empty_str_on_exception
     def country_code(self) -> str:
         return self._network_info.country_code
 
@@ -59,39 +76,7 @@ class IpInformation:
         return self._network_info.is_drop
 
     @cached_property
-    def _fp(self) -> BinaryIO:
-        return self._db.fp
-
-    def _read_string(self, position: int) -> str:
-        self._fp.seek(position, os.SEEK_SET)
-        data: bytes = b""
-        while (null_pos := data.find(b"\x00")) == -1:
-            data += self._fp.read(500)
-        return data[:null_pos].decode("utf8")
-
-    def _find_object(self, start_offset: int, max_size: int, obj_to_read: type[T], predicate: Callable[[T], int]) -> T:
-        # Implementation from https://github.com/ipfire/libloc/blob/master/src/database.c#L760
-        object_size = size(obj_to_read)
-        lo = 0
-        hi = as_int(max_size / object_size) - 1
-
-        while lo <= hi:
-            mid = (lo + hi) // 2
-            self._fp.seek(start_offset + mid * object_size)
-            obj = obj_to_read.read(self._fp)
-
-            pred = predicate(obj)
-            if pred == 0:
-                return obj
-
-            if pred < 0:
-                lo = mid + 1
-            else:
-                hi = mid - 1
-
-        raise _CannotFindObject
-
-    @cached_property
+    @return_empty_str_on_exception
     def asn_name(self) -> str:
         def cmp(obj: loc_database_as_v1) -> int:
             if obj.number == self.asn:
@@ -129,10 +114,12 @@ class IpInformation:
         )
 
     @cached_property
+    @return_empty_str_on_exception
     def country_name(self) -> str:
         return self._read_string(self._db.header.pool_offset + self._country_info.name)
 
     @cached_property
+    @return_empty_str_on_exception
     def country_continent(self) -> str:
         return self._country_info.continent_code
 
@@ -154,3 +141,36 @@ class IpInformation:
     @cached_property
     def ip_with_cidr(self) -> str:
         return f"{self.network_address}/{self.subnet_mask}"
+
+    @cached_property
+    def _fp(self) -> BinaryIO:
+        return self._db.fp
+
+    def _read_string(self, position: int) -> str:
+        self._fp.seek(position, os.SEEK_SET)
+        data: bytes = b""
+        while (null_pos := data.find(b"\x00")) == -1:
+            data += self._fp.read(500)
+        return data[:null_pos].decode("utf8")
+
+    def _find_object(self, start_offset: int, max_size: int, obj_to_read: type[T], predicate: Callable[[T], int]) -> T:
+        # Implementation from https://github.com/ipfire/libloc/blob/master/src/database.c#L760
+        object_size = size(obj_to_read)
+        lo = 0
+        hi = as_int(max_size / object_size) - 1
+
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            self._fp.seek(start_offset + mid * object_size)
+            obj = obj_to_read.read(self._fp)
+
+            pred = predicate(obj)
+            if pred == 0:
+                return obj
+
+            if pred < 0:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        raise _CannotFindObject

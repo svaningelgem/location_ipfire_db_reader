@@ -1,3 +1,5 @@
+from _testcapi import raise_exceptionfrom location_ipfire_db_reader import LocationDatabase
+
 # location_ipfire_db_reader
 
 ## Introduction
@@ -78,6 +80,15 @@ All exceptions within this package will inherit from `LocationIPFireDBReaderExce
 However, these are more fine-tuned versions:
 - `UnknownASNName`: will be raised when an ASN is found, but there is no known name for it.
 - `IPAddressError`: will be raised when an IP lookup fails. This happens with reserved IPs so far.
+
+### What if you don't want exceptions?
+If you don't like to handle exceptions, you can always initialize your `LocationDatabase` like this:
+
+```python
+db = LocationDatabase(raise_exceptions=False)
+```
+
+Now if for example the AS isn't known, it will output `0` for the asn, and `""` for the AS name. Instead of raising an exception.
 
 
 ## Developers information

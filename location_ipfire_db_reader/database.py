@@ -1,17 +1,26 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-from .database_reader import DatabaseReader
+from .exceptions import IPAddressError
+from .database_reader import DatabaseReader, is_ipv4
+from .interpret_location_db import loc_database_network_v1
 from .ip_information import IpInformation
 
 __all__ = ["LocationDatabase"]
 
 
-@dataclass
 class LocationDatabase(DatabaseReader):
     def __getitem__(self, ip: str) -> IpInformation:
-        return IpInformation(self, ip, *self._find_network_information(ip))
+        """Retrieve information about 1 IP address."""
+        try:
+            network_info, subnet_mask = self._find_network_information(ip)
+        except IPAddressError:
+            if self.raise_exceptions:
+                raise
+            network_info = loc_database_network_v1(country_code="", _reserve=b"", asn=0, flags=0, padding=b"")
+            subnet_mask = 128
+
+        return IpInformation(self, ip, network_info, subnet_mask)
 
     def find_country(self, ip: str) -> str:
-        return self._find_network_information(ip)[0].country_code
+        """Convience method to quickly find the country code."""
+        return self[ip].country_code
