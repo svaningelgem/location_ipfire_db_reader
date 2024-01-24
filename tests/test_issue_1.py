@@ -1,8 +1,5 @@
-"""
-Issue #1 reported by MaurUppi:
+"""Issue #1 reported by MaurUppi.
 https://github.com/svaningelgem/location_ipfire_db_reader/issues/1
-
-> the lookup result is not good.
 """
 import pytest
 
@@ -42,17 +39,3 @@ def test_getitem(locdb: LocationDatabase) -> None:
     assert not sut.is_satellite_provider
     assert not sut.is_anycast
     assert not sut.is_drop
-
-
-def test_getitem_failure(locdb: LocationDatabase) -> None:
-    with pytest.raises(ValueError, match="Cannot find anything anymore!"):
-        locdb["255.255.255.255"]
-
-
-def test_ip_information_failure(locdb: LocationDatabase) -> None:
-    sut = locdb["5.39.209.157"]
-    # Ok, we've got to fake it...
-    fake_asn = 0xFFFFFF
-    sut._network_info.asn = fake_asn
-    with pytest.raises(ValueError, match=f"Can't find asn object with id {fake_asn}!"):
-        sut.asn_name

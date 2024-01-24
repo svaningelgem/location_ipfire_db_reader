@@ -1,49 +1,38 @@
 from __future__ import annotations
 
-import contextlib
 import os
+import time
+import typing
 from datetime import datetime
-from pathlib import Path
 
-from requests import Response, Session
+from requests import Session
 
 from .decompress_db import decompress_xz_file
 
-
-def _get_last_modified(resp: Response) -> float:
-    """
-    :raise: KeyError when the header isn't found
-    """
-
-    return datetime.strptime(resp.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z").timestamp()
+if typing.TYPE_CHECKING:
+    from pathlib import Path
 
 
 def download_or_update_location_database(target_file: Path) -> None:
-    if target_file.exists() and target_file.stat().st_mtime > datetime.now().timestamp() - 24 * 60 * 60:
+    yesterday = time.time() - 24 * 60 * 60
+    if target_file.exists() and target_file.stat().st_mtime > yesterday:
         return  # Don't re-_download it so often! Just once a day should be fine.
 
     target_url = "https://location.ipfire.org/databases/1/location.db.xz"
 
     session = Session()
-    response = session.head(target_url)
-    try:
-        server_last_modified_time = _get_last_modified(response)
-        need_re_download = not target_file.exists() or target_file.stat().st_mtime < server_last_modified_time
-    except KeyError:
-        try:
-            filesize = response.headers["Content-Length"]
-            need_re_download = not target_file.exists() or filesize == target_file.stat().st_size
-        except KeyError:
-            need_re_download = True
 
-    if not need_re_download:
-        return
+    need_re_download = True
+    if target_file.exists():
+        response = session.head(target_url)
 
-    response = session.get(target_url)
+        if "Last-Modified" in response.headers:
+            server_last_modified_time = datetime.strptime(response.headers["Last-Modified"], "%a, %d %b %Y %H:%M:%S %Z")
+            need_re_download = target_file.stat().st_mtime < server_last_modified_time.timestamp()
 
-    target_file.write_bytes(response.content)
-    with contextlib.suppress(KeyError):
-        atime = target_file.stat().st_atime
-        os.utime(target_file, (atime, _get_last_modified(response)))
+    if need_re_download:
+        response = session.get(target_url)
+        target_file.write_bytes(response.content)
+        decompress_xz_file(target_file)
 
-    decompress_xz_file(target_file)
+    os.utime(target_file, (time.time(), time.time()))
