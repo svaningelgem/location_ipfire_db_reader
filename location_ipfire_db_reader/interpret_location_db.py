@@ -114,7 +114,7 @@ class loc_database_header_v1(Block):
     signature2: bytes = f"{LOC_SIGNATURE_MAX_LENGTH}s"
 
     # Add some padding for future extensions
-    padding: bytes = "32s"
+    _padding: bytes = "32s"
 
     @classmethod
     def read(cls, fp: IO) -> loc_database_header_v1:
@@ -126,7 +126,7 @@ class loc_database_header_v1(Block):
             obj.signature1 = struct.unpack(f"{obj.signature1_length}s", n_bytes)
             n_bytes = fp.read(obj.signature2_length)
             obj.signature2 = struct.unpack(f"{obj.signature2_length}s", n_bytes)
-            obj.padding = struct.unpack(cls.padding, fp.read(int(cls.padding[:-1])))
+            obj._padding = struct.unpack(cls._padding, fp.read(int(cls._padding[:-1])))
         return obj
 
 
@@ -161,7 +161,7 @@ class loc_database_network_v1(Block):
     flags: int = "H"  # uint16_t
 
     #  Reserved
-    padding: bytes = "2s"
+    _padding: bytes = "2s"
 
     @property
     def is_anonymous_proxy(self) -> bool:
