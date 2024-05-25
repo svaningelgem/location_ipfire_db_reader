@@ -32,9 +32,9 @@ def test_getitem(locdb: LocationDatabase) -> None:
     assert sut.country_continent == "EU"
 
     assert sut.ip == "5.39.209.157"
-    assert sut.subnet_mask == 24
-    assert sut.network_address == "5.39.209.0"
-    assert sut.ip_with_cidr == "5.39.209.0/24"
+    assert sut.subnet_mask == 22
+    assert sut.network_address == "5.39.208.0"
+    assert sut.ip_with_cidr == "5.39.208.0/22"
 
     assert not sut.is_anonymous_proxy
     assert not sut.is_satellite_provider
