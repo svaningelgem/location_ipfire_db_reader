@@ -1,5 +1,3 @@
-from _testcapi import raise_exceptionfrom location_ipfire_db_reader import LocationDatabase
-
 # location_ipfire_db_reader
 
 ## Introduction

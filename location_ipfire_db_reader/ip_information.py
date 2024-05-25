@@ -24,8 +24,7 @@ T = TypeVar("T", bound=Block)
 __all__ = ["IpInformation"]
 
 
-class _CannotFindObject(Exception):
-    ...
+class _CannotFindObject(Exception): ...
 
 
 def return_empty_str_on_exception(func: Callable) -> Callable:

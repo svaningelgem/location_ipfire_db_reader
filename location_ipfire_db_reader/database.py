@@ -16,7 +16,7 @@ class LocationDatabase(DatabaseReader):
         except IPAddressError:
             if self.raise_exceptions:
                 raise
-            network_info = loc_database_network_v1(country_code="", _reserve=b"", asn=0, flags=0, padding=b"")
+            network_info = loc_database_network_v1(country_code="", _reserve=b"", asn=0, flags=0, _padding=b"")
             subnet_mask = 128
 
         return IpInformation(self, ip, network_info, subnet_mask)

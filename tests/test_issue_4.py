@@ -1,6 +1,7 @@
 """Issue #4 reported by MaurUppi.
 https://github.com/svaningelgem/location_ipfire_db_reader/issues/4
 """
+
 import pytest
 
 from location_ipfire_db_reader import LocationDatabase
@@ -48,9 +49,9 @@ def test_failure_cant_find_asn2(locdb: LocationDatabase) -> None:
     assert sut.country_continent == "OC"
 
     assert sut.ip == "202.37.126.25"
-    assert sut.subnet_mask == 8
+    assert sut.subnet_mask == 7
     assert sut.network_address == "202.0.0.0"
-    assert sut.ip_with_cidr == "202.0.0.0/8"
+    assert sut.ip_with_cidr == "202.0.0.0/7"
 
     assert not sut.is_anonymous_proxy
     assert not sut.is_satellite_provider

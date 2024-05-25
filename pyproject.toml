@@ -36,6 +36,14 @@ exclude_also = [
 
 
 [tool.ruff]
+fix = true
+
+# Same as Black.
+line-length = 120
+
+target-version = "py39"
+
+[tool.ruff.lint]
 select = [
     "ANN", # flake8-annotations
     "B", # flake8-bugbear
@@ -73,12 +81,6 @@ ignore = [
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
-fix = true
-
-# Same as Black.
-line-length = 120
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-target-version = "py39"
