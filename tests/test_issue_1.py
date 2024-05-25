@@ -1,6 +1,7 @@
 """Issue #1 reported by MaurUppi.
 https://github.com/svaningelgem/location_ipfire_db_reader/issues/1
 """
+
 import pytest
 
 from location_ipfire_db_reader import LocationDatabase

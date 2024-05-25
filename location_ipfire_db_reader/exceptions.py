@@ -3,8 +3,7 @@ from dataclasses import dataclass
 __all__ = ["LocationIPFireDBReaderException", "UnknownASNName", "IPAddressError"]
 
 
-class LocationIPFireDBReaderException(Exception):
-    ...
+class LocationIPFireDBReaderException(Exception): ...
 
 
 @dataclass(frozen=True)
