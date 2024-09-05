@@ -10,7 +10,7 @@ from location_ipfire_db_reader import LocationDatabase
 from location_ipfire_db_reader.download_db import download_or_update_location_database
 
 
-@pytest.fixture()
+@pytest.fixture
 def fake_download_session(mocker: MockerFixture) -> MockType:
     session = mocker.patch("location_ipfire_db_reader.download_db.Session").return_value
 
