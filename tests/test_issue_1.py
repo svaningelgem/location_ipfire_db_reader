@@ -13,7 +13,7 @@ from location_ipfire_db_reader import LocationDatabase
         ("8.8.8.8", "US"),
         ("1.1.1.1", "AU"),
         ("1.32.233.111", "US"),
-        ("1.32.252.111", "AP"),  # Asia/Pacific?
+        ("1.32.252.111", "KH"),
         ("113.74.8.78", "CN"),
         ("212.107.28.52", "AP"),  # Asia/Pacific?
     ],

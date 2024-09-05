@@ -71,14 +71,14 @@ def test_failure_cant_find_asn3(locdb: LocationDatabase) -> None:
     sut = locdb["88.218.67.25"]
 
     assert sut.asn == 0
-    assert sut.country_code == "UA"
-    assert sut.country_name == "Ukraine"
+    assert sut.country_code == "RU"
+    assert sut.country_name == "Russian Federation"
     assert sut.country_continent == "EU"
 
     assert sut.ip == "88.218.67.25"
-    assert sut.subnet_mask == 22
-    assert sut.network_address == "88.218.64.0"
-    assert sut.ip_with_cidr == "88.218.64.0/22"
+    assert sut.subnet_mask == 23
+    assert sut.network_address == "88.218.66.0"
+    assert sut.ip_with_cidr == "88.218.66.0/23"
 
     assert not sut.is_anonymous_proxy
     assert not sut.is_satellite_provider
