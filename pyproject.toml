@@ -74,8 +74,6 @@ ignore = [
     "D211",
     "D213",
     "ANN001",  # Missing type annotation for function argument `self`
-    "ANN101",  # Missing type annotation for `self` in method
-    "ANN102",  # Missing type annotation for `cls` in classmethod
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.

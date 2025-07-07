@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-__all__ = ["LocationIPFireDBReaderException", "UnknownASNName", "IPAddressError"]
+__all__ = ["IPAddressError", "LocationIPFireDBReaderException", "UnknownASNName"]
 
 
 class LocationIPFireDBReaderException(Exception): ...
