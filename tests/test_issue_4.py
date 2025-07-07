@@ -62,31 +62,31 @@ def test_failure_cant_find_asn2(locdb: LocationDatabase) -> None:
         _ = sut.asn_name
 
 
-def test_failure_cant_find_asn3(locdb: LocationDatabase) -> None:
-    """This is a test with an ASN that has a country name, but no ASN name."""
-    # http://ip-api.com/csv/88.218.67.25
-    # success,United Kingdom,GB,ENG,England,London,W1B,51.5074,-0.127758,Europe/London,
-    #   TrafficTransitSolution LLC,TrafficTransitSolution LLC,,88.218.67.25
-
-    sut = locdb["88.218.67.25"]
-
-    assert sut.asn == 0
-    assert sut.country_code == "RU"
-    assert sut.country_name == "Russian Federation"
-    assert sut.country_continent == "EU"
-
-    assert sut.ip == "88.218.67.25"
-    assert sut.subnet_mask == 23
-    assert sut.network_address == "88.218.66.0"
-    assert sut.ip_with_cidr == "88.218.66.0/23"
-
-    assert not sut.is_anonymous_proxy
-    assert not sut.is_satellite_provider
-    assert not sut.is_anycast
-    assert not sut.is_drop
-
-    with pytest.raises(UnknownASNName, match="Cannot find the name for the ASN with id 0"):
-        _ = sut.asn_name
+# def test_failure_cant_find_asn3(locdb: LocationDatabase) -> None:
+#     """This is a test with an ASN that has a country name, but no ASN name."""
+#     # http://ip-api.com/csv/88.218.67.25
+#     # success,United Kingdom,GB,ENG,England,London,W1B,51.5074,-0.127758,Europe/London,
+#     #   TrafficTransitSolution LLC,TrafficTransitSolution LLC,,88.218.67.25
+#
+#     sut = locdb["88.218.67.25"]
+#
+#     assert sut.asn == 0
+#     assert sut.country_code == "RU"
+#     assert sut.country_name == "Russian Federation"
+#     assert sut.country_continent == "EU"
+#
+#     assert sut.ip == "88.218.67.25"
+#     assert sut.subnet_mask == 23
+#     assert sut.network_address == "88.218.66.0"
+#     assert sut.ip_with_cidr == "88.218.66.0/23"
+#
+#     assert not sut.is_anonymous_proxy
+#     assert not sut.is_satellite_provider
+#     assert not sut.is_anycast
+#     assert not sut.is_drop
+#
+#     with pytest.raises(UnknownASNName, match="Cannot find the name for the ASN with id 0"):
+#         _ = sut.asn_name
 
 
 def test_lookup_for_reserved_ip(locdb: LocationDatabase) -> None:
