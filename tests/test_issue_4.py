@@ -2,6 +2,8 @@
 https://github.com/svaningelgem/location_ipfire_db_reader/issues/4
 """
 
+import re
+
 import pytest
 
 from location_ipfire_db_reader import LocationDatabase
@@ -92,7 +94,8 @@ def test_failure_cant_find_asn2(locdb: LocationDatabase) -> None:
 def test_lookup_for_reserved_ip(locdb: LocationDatabase) -> None:
     """This is a test with an ASN that has a country name, but no ASN name."""
     with pytest.raises(
-        IPAddressError, match="No information could be found for '100.127.255.25'. Likely this is a reserved IP?"
+        IPAddressError,
+        match=re.escape("No information could be found for '100.127.255.25'. Likely this is a reserved IP?"),
     ):
         _ = locdb["100.127.255.25"]
 
