@@ -6,6 +6,11 @@ def test_bitstrings() -> None:
     assert _convert_ip_to_bitstring(134744072) == _convert_ip_to_bitstring("8.8.8.8")
 
 
+def test_bitstring_passthrough() -> None:
+    bitstring = _convert_ip_to_bitstring("8.8.8.8")
+    assert _convert_ip_to_bitstring(bitstring) == bitstring
+
+
 def test_all_countries(locdb: LocationDatabase) -> None:
     _ = next(locdb.all_countries())  # Shouldn't fail
 
