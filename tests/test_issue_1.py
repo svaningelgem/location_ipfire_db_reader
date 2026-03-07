@@ -10,10 +10,10 @@ from location_ipfire_db_reader import LocationDatabase
 @pytest.mark.parametrize(
     ("ip", "expected_country"),
     [
-        ("8.8.8.8", "US"),          # Google Public DNS — ultra-stable
-        ("1.1.1.1", "AU"),          # Cloudflare DNS — ultra-stable
-        ("113.74.8.78", "CN"),      # China Telecom /10 block — large, stable
-        ("212.107.28.52", "AP"),    # Asia/Pacific region
+        ("8.8.8.8", "US"),        # Google Public DNS — ultra-stable
+        ("1.1.1.1", "AU"),        # Cloudflare DNS — ultra-stable
+        ("113.74.8.78", "CN"),    # China Telecom /10 block — large, stable
+        ("212.107.28.52", "AP"),  # Asia/Pacific region
     ],
 )
 def test_basic_retrieval(locdb: LocationDatabase, ip: str, expected_country: str) -> None:
@@ -30,7 +30,8 @@ def test_basic_retrieval(locdb: LocationDatabase, ip: str, expected_country: str
 def test_country_lookup_returns_result(locdb: LocationDatabase, ip: str) -> None:
     """Verify issue #1 IPs return a valid country code rather than crashing."""
     result = locdb.find_country(ip)
-    assert len(result) == 2 and result == result.upper()
+    assert len(result) == 2
+    assert result == result.upper()
 
 
 def test_getitem(locdb: LocationDatabase) -> None:
