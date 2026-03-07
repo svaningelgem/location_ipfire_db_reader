@@ -83,7 +83,7 @@ However, these are more fine-tuned versions:
 If you don't like to handle exceptions, you can always initialize your `LocationDatabase` like this:
 
 ```python
-db = LocationDatabase(raise_exceptions=False)
+db = LocationDatabase('location.db', raise_exceptions=False)
 ```
 
 Now if for example the AS isn't known, it will output `0` for the asn, and `""` for the AS name. Instead of raising an exception.
