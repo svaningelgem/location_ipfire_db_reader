@@ -150,6 +150,13 @@ class DatabaseReader:
 
                 network_offset = self.header.network_data_offset + previous_node.network * size(loc_database_network_v1)
                 self.fp.seek(network_offset, os.SEEK_SET)
-                return loc_database_network_v1.read(self.fp), len(node_chain)
+                network_data = loc_database_network_v1.read(self.fp)
+
+                # Skip catch-all entries with no useful data; keep backtracking
+                # for a parent leaf that may have real information.
+                if not network_data.country_code and network_data.asn == 0 and network_data.flags == 0:
+                    continue
+
+                return network_data, len(node_chain)
 
             raise IPAddressError(ip)
