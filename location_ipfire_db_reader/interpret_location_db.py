@@ -60,7 +60,7 @@ class Block:
         # Convert bytes into string
         for idx, (field, value) in enumerate(zip(cls.__dataclass_fields__.values(), data)):  # type: tuple[int, tuple["Field", object]]
             if field.type == "str":
-                data[idx] = value.decode("utf8")
+                data[idx] = value.decode("utf8").strip("\x00")
 
         return cls(*data)
 
