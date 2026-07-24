@@ -20,8 +20,8 @@ from location_ipfire_db_reader import LocationDatabase
 
 # This call will _download the location database into the provided file.
 #   It will not re-_download it if there are no updates.
-db = LocationDatabase('location.db')
-print(db.find_country('8.8.8.8'))  # US
+db = LocationDatabase("location.db")
+print(db.find_country("8.8.8.8"))  # US
 ```
 
 This library should work for both IP4 & IP6.
@@ -32,7 +32,7 @@ What if you wanted to get (much) more information? Like the continent, or the pr
 ```python
 from location_ipfire_db_reader import LocationDatabase
 
-db = LocationDatabase('location.db')
+db = LocationDatabase("location.db")
 ip_info = db["8.8.8.8"]
 print(f"""
 ip: {ip_info.ip}
@@ -83,7 +83,7 @@ However, these are more fine-tuned versions:
 If you don't like to handle exceptions, you can always initialize your `LocationDatabase` like this:
 
 ```python
-db = LocationDatabase('location.db', raise_exceptions=False)
+db = LocationDatabase("location.db", raise_exceptions=False)
 ```
 
 Now if for example the AS isn't known, it will output `0` for the asn, and `""` for the AS name. Instead of raising an exception.

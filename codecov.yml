@@ -1,0 +1,10 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true  # report project coverage but never block the PR on it
+    patch:
+      default:
+        target: 90%
