@@ -1,29 +1,40 @@
-[tool.poetry]
+[project]
 name = "location_ipfire_db_reader"
 version = "1.0.7"
 description = "Easily get the country code from an ip address."
-authors = ["Steven Van Ingelgem <steven@vaningelgem.be>"]
-license = "MIT"
+authors = [{ name = "Steven Van Ingelgem", email = "steven@vaningelgem.be" }]
+requires-python = ">=3.10"
 readme = "README.md"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["requests>=2"]
 
+[project.urls]
+"Source Code" = "https://github.com/svaningelgem/location_ipfire_db_reader"
 
-[tool.poetry.dependencies]
-python = ">=3.10"
-requests = ">=2"
+[dependency-groups]
+dev = [
+    "ruff",
+    "pytest-cov",
+    "pytest-mock",
+]
 
+[tool.uv]
+default-groups = "all"
 
-[tool.poetry.group.dev.dependencies]
-ruff = "*"
-pytest-cov = "*"
-pytest-mock = "*"
+[tool.uv.build-backend]
+module-root = ""
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-
-[tool.poetry.urls]
-"Source Code" = "https://github.com/svaningelgem/location_ipfire_db_reader"
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
 
 
 [tool.coverage.run]
