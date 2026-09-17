@@ -38,6 +38,7 @@ build-backend = "uv_build"
 
 
 [tool.coverage.run]
+source = ["location_ipfire_db_reader"]
 branch = true
 
 [tool.coverage.report]
